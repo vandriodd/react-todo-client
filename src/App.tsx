@@ -1,12 +1,17 @@
 import './index.css'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { type Todo } from './types.d'
 import TodoCreate from './components/TodoCreate'
 import TodoList from './components/TodoList'
 
 
 function App() {
-  const [todos, setTodos] = useState<Todo[]>([])
+  const initialTodos = JSON.parse(localStorage.getItem('todos') || '[]')
+  const [todos, setTodos] = useState<Todo[]>(initialTodos)
+
+  useEffect(() => {
+    localStorage.setItem('todos', JSON.stringify(todos))
+  }, [todos])
 
   const handleCreate = (title: string, description: string) => {
     setTodos((prevState) => [
