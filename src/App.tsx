@@ -1,13 +1,13 @@
 import './index.css'
 import { useState, useEffect } from 'react'
-import { type Todo } from './types.d'
+import { type TodoListType } from './types.d'
 import TodoCreate from './components/TodoCreate'
 import TodoList from './components/TodoList'
 
 
 function App() {
   const initialTodos = JSON.parse(localStorage.getItem('todos') || '[]')
-  const [todos, setTodos] = useState<Todo[]>(initialTodos)
+  const [todos, setTodos] = useState<TodoListType>(initialTodos)
 
   useEffect(() => {
     localStorage.setItem('todos', JSON.stringify(todos))
@@ -35,17 +35,6 @@ function App() {
     })
   }
 
-  const handleCopy = (titleToCopy: string, descriptionToCopy: string) => {
-    const contentToCopy = `${titleToCopy} - ${descriptionToCopy}`
-
-    if (contentToCopy) {
-      navigator.clipboard.writeText(contentToCopy)
-      alert('Text copied to clipboard');
-    } else {
-      alert('Nothing to copy');
-    }
-  }
-
   const handleToggleComplete = (id: number) => {
     setTodos((prevState) => prevState.map((todo) => todo.id === id ? { ...todo, completed: !todo.completed } : todo ))
   }
@@ -55,7 +44,7 @@ function App() {
     <header>Todo list</header>
     <main className="app">
       <TodoCreate onCreate={handleCreate} />
-      <TodoList todos={todos} onDelete={handleDelete} onEdit={handleEdit} onCopy={handleCopy} onToggleCompleted={handleToggleComplete} />
+      <TodoList todos={todos} onDelete={handleDelete} onEdit={handleEdit} onToggleCompleted={handleToggleComplete} />
     </main>
     </>
   )

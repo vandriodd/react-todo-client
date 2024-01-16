@@ -5,15 +5,15 @@ export interface TodoItemProps {
   todo: Todo
   onDelete: (id: number) => void
   onEdit: (id: number, newTitle: string, newDescription: string) => void
-  onCopy: (titleToCopy: string, descriptionToCopy: string) => void
   onToggleCompleted: (id: number) => void
 }
 
-const TodoItem = ({ todo, onDelete, onEdit, onCopy, onToggleCompleted }: TodoItemProps) => {
+const TodoItem = ({ todo, onDelete, onEdit, onToggleCompleted }: TodoItemProps) => {
   const [edit, setEdit] = useState(false)
   const [newTitle, setNewTitle] = useState(todo.title)
   const [newDescription, setNewDescription] = useState(todo.description)
   const [error, setError] = useState(false)
+  const [feedback, setFeedback] = useState<string | null>(null);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
@@ -27,6 +27,18 @@ const TodoItem = ({ todo, onDelete, onEdit, onCopy, onToggleCompleted }: TodoIte
     }
   }
 
+  const handleCopy = () => {
+    const contentToCopy = `${todo.title} - ${todo.description}`;
+    navigator.clipboard
+      .writeText(contentToCopy)
+      .then(() => setFeedback('Copied!'))
+      .catch(() => setFeedback('Error copying!'));
+
+    setTimeout(() => {
+      setFeedback(null);
+    }, 2000);
+  };
+
   return (
     <>
     {!edit ? (
@@ -34,7 +46,8 @@ const TodoItem = ({ todo, onDelete, onEdit, onCopy, onToggleCompleted }: TodoIte
         <div className="buttons">
           <button className="edit" onClick={() => setEdit(!edit)}>Edit</button>
           <button className="delete" onClick={() => onDelete(todo.id)}>Delete</button>
-          <button className="copy" onClick={() => onCopy(todo.title, todo.description)}>Copy</button>
+          <button className="copy" onClick={handleCopy}>Copy</button>
+          {feedback && <span className="feedback">{feedback}</span>}
           <label className="checkbox">
             <input type="checkbox" checked={todo.completed} onChange={() => onToggleCompleted(todo.id)} />
           </label>
